@@ -18,10 +18,10 @@ class JSONLLoader(BaseLoader):
         self.file_path = Path(file_path)
         self.text_field = text_field
         self.id_field = id_field
-        self.metadata_fields = metadata_fields or []
+        self.metadata_fields = metadata_fields
         self.encoding = encoding
         
-        self.validate_configuration()
+        self._validate_configuration()
     
     def _validate_configuration(self) -> None:
         """Validates the loader config before reading the file"""
@@ -29,20 +29,33 @@ class JSONLLoader(BaseLoader):
             raise TypeError("text_field must be a string")
         if not self.text_field.strip():
             raise ValueError("text_field can't be empty")
-        if self.id_field is not None and not isinstance(self.id_field, str):
-            raise TypeError("id_field must be a string or None")
-        if not isinstance(self.metadata_fields, list):
+        if self.id_field is not None:
+            if not isinstance(self.id_field, str):
+                raise TypeError("id_field must be a string or None")
+            if not self.id_field.strip():
+                raise ValueError("id_field can't be empty")
+        if self.metadata_fields is None:
+            self.metadata_fields = []
+        elif not isinstance(self.metadata_fields, list):
             raise TypeError("metadata fields must be a list")
-        if not all(isinstance(field_name, str) for field_name in self.metadata_fields):
-            raise TypeError("Every metadata field must be a string")
+        else:
+            self.metadata_fields = list(self.metadata_fields)
+        for field_name in self.metadata_fields:
+            if not isinstance(field_name, str):
+                raise TypeError("Every item in metadata field must be a string")
+            if not field_name.strip():
+                raise ValueError("metadata field names can't be empty")
+        
         if not isinstance(self.encoding, str):
             raise TypeError("encoding must be a string")
+        if not self.encoding.strip():
+            raise ValueError("encoding can't be empty")
     
     def _validate_file(self) -> None:
         """Validate that the configured JSONL file can be read"""
         if not self.file_path.exists():
             raise FileNotFoundError(
-                f"JSONL file deosn't exist: {self.file_path}"
+                f"JSONL file doesn't exist: {self.file_path}"
             )
         if not self.file_path.is_file():
             raise ValueError(
@@ -88,24 +101,24 @@ class JSONLLoader(BaseLoader):
                 except json.JSONDecodeError as error:
                     raise ValueError(
                         f"Invalid JSON at {self.file_path},"
-                        f"line {line_number}: {error.msg}"
+                        f"line { line_number}: {error.msg}"
                     ) from error
                 if not isinstance(record, dict):
                     raise TypeError(
                         f"Expected a JSON Object at {self.file_path},"
-                        f"line {line_number}"
+                        f"line { line_number}"
                     )
                 if self.text_field not in record:
                     raise KeyError(
                         f"Missing text field '{self.text_field}' at"
-                        f"{self.file_path}, line {line_number}"
+                        f"{self.file_path}, line { line_number}"
                     )
                 raw_text = record[self.text_field]
                 
                 if not isinstance(raw_text, str):
                     raise TypeError(
                         f"Field '{self.text_field}' must contain a string at"
-                        f"{self.file_path}, line {line_number}"
+                        f"{self.file_path}, line { line_number}"
                     )
                 source_id = None
                 
