@@ -12,7 +12,7 @@ from collections.abc import Iterator
 
 from lagrangianlm.data.schemas import Document
 
-class loader(ABC):  #an abstract class means it will not be used directly
+class BaseLoader(ABC):  #an abstract class means it will not be used directly
     """An abstract interface for all dataset loaders"""
     def __init__(self, source_name: str, split: str = "train") -> None:
         if not isinstance(source_name, str):
