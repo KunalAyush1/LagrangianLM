@@ -20,10 +20,10 @@
 ### Overall Project Progress
 
 ```text
-█░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 3%
+███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 8%
 ```
 
->  **Currently Building:** Project Foundation & Development Environment
+> 🚧 **Currently Building:** Data Ingestion Pipeline — Loaders, Validation, and Testing
 
 ---
 
