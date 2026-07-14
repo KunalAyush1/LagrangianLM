@@ -20,7 +20,7 @@
 ### Overall Project Progress
 
 ```text
-███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 8%
+███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 20%
 ```
 
 > 🚧 **Currently Building:** Data Ingestion Pipeline — Loaders, Validation, and Testing
